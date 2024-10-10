@@ -1,0 +1,17 @@
+{
+  "name": "das-man",
+  "workspaceFolder": "/workspaces/das-man/",
+  "dockerComposeFile": ["../docker/docker-compose.development.yaml"],
+  "service": "app",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "adam-bender.commit-message-editor",
+        "biomejs.biome",
+        "chakra-ui.panda-css-vscode",
+        "editorconfig.editorconfig",
+        "oven.bun-vscode"
+      ]
+    }
+  }
+}

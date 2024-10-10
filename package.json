@@ -1,0 +1,49 @@
+{
+  "name": "das-man",
+  "version": "0.1.0",
+  "repository": "https://github.com/hitachinaka-mojo-club/das-man.git",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "module": "nodenext",
+  "scripts": {
+    "prepare": "lefthook install",
+    "generate": "bun panda:generate",
+    "dev": "bun run --bun next dev",
+    "build": "bun run --bun next build",
+    "start": "bun run --bun next start",
+    "check": "bun biome check .",
+    "check:fix": "bun biome check . --write",
+    "test": "bun test",
+    "panda:generate": "panda codegen --config ./panda.config.ts"
+  },
+  "dependencies": {
+    "@openai/realtime-api-beta": "openai/openai-realtime-api-beta",
+    "framer-motion": "11.11.7",
+    "lottie-react": "2.4.0",
+    "next": "14.2.15",
+    "next-themes": "0.3.0",
+    "openai": "4.67.3",
+    "react": "18.3.1",
+    "react-camera-pro": "1.4.0",
+    "react-dom": "18.3.1",
+    "ts-pattern": "5.4.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.3",
+    "@pandacss/dev": "0.46.1",
+    "@pandacss/studio": "0.46.1",
+    "@tsconfig/bun": "1.0.7",
+    "@tsconfig/next": "2.0.3",
+    "@tsconfig/strictest": "2.0.5",
+    "@types/bun": "1.1.11",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.20",
+    "lefthook": "1.7.18",
+    "postcss": "8.4.47",
+    "postcss-import": "16.1.0",
+    "ts-essentials": "10.0.2",
+    "typescript": "5.6.3"
+  }
+}

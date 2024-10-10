@@ -1,0 +1,30 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# deliverable
+.next/
+build/
+dist/
+out/
+
+# dependency
+node_modules/
+
+# env file
+.env*
+!.env.example
+
+# generated
+**/style/css/
+**/style/jsx/
+**/style/patterns/
+**/style/tokens/
+**/style/types/
+**/style/helpers.*
+
+# misc
+.DS_Store
+*.pem
+
+# vercel
+.turbo/
+.vercel/

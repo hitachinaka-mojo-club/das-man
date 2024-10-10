@@ -1,0 +1,6 @@
+pre-commit:
+  parallel: true
+  commands:
+    check-fix:
+      glob: "*.*{js,ts}*"
+      run: bun run check:fix {staged_files}

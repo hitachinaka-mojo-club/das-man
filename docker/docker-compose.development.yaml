@@ -1,0 +1,11 @@
+services:
+  app:
+    container_name: das-man-app
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile.development
+    volumes:
+      - type: bind
+        source: ../
+        target: /workspaces/das-man/
+    tty: true
