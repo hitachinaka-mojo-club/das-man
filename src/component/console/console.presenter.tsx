@@ -32,6 +32,7 @@ export const Console = (): ReactNode => {
 
   const [items, setItems] = useState<ItemType[]>([]);
   const [isConnected, setIsConnected] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   // const [shouldInduceTopic, setShouldInduceTopic] = useState(false);
   const [shouldDisConnect, setShouldDisconnect] = useState(false);
 
@@ -58,7 +59,7 @@ export const Console = (): ReactNode => {
     //   },
     // ]);
 
-    await wavRecorder.record(data => client.appendInputAudio(data.mono));
+    // await wavRecorder.record(data => client.appendInputAudio(data.mono));
   }, []);
 
   const disconnectConversation = useCallback(async () => {
@@ -113,7 +114,7 @@ export const Console = (): ReactNode => {
         最初の発話では、カメラ画像を基にユーザーの外見について愛のあるいじりをしてください。
       `,
       voice: 'echo',
-      turn_detection: { type: 'server_vad' },
+      turn_detection: null,
     });
 
     client.addTool(
@@ -272,6 +273,80 @@ export const Console = (): ReactNode => {
   }, [isConnected]);
 
   useEffect(() => {
+    const startRecording = async () => {
+      setIsRecording(true);
+
+      const client = realtimeClientRef.current;
+
+      const wavStreamPlayer = wavStreamPlayerRef.current;
+      const trackSampleOffset = await wavStreamPlayer.interrupt();
+      if (trackSampleOffset?.trackId) {
+        const { trackId, offset } = trackSampleOffset;
+        await client.cancelResponse(trackId, offset);
+      }
+
+      const wavRecorder = wavRecorderRef.current;
+      await wavRecorder.record(data => {
+        client.appendInputAudio(data.mono);
+      });
+    };
+
+    const stopRecording = async () => {
+      setIsRecording(false);
+
+      const wavRecorder = wavRecorderRef.current;
+      await wavRecorder.pause();
+
+      const client = realtimeClientRef.current;
+      if (client.inputAudioBuffer.byteLength <= 0) {
+        return;
+      }
+
+      client.realtime.send('input_audio_buffer.commit', {});
+      client.conversation.queueInputAudio(client.inputAudioBuffer);
+      client.inputAudioBuffer = new Int16Array(0);
+
+      client.createResponse();
+    };
+
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.code !== 'Space' || isRecording) {
+        return;
+      }
+
+      await startRecording();
+    };
+
+    const handleKeyUp = async (event: KeyboardEvent) => {
+      if (event.code !== 'Space' || !isRecording) {
+        return;
+      }
+
+      await stopRecording();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [isRecording]);
+
+  // useEffect(() => {
+  //   const client = realtimeClientRef.current;
+
+  //   if (items.length > 7) {
+  //     items.slice(0, items.length - 7).forEach(item => {
+  //       client.deleteItem(item.id);
+  //     });
+  //   }
+
+  //   // console.log(client.conversation.getItems());
+  // }, [items]);
+
+  useEffect(() => {
     const client = realtimeClientRef.current;
 
     // if (elapsedTime > 90 && !shouldInduceTopic) {
@@ -298,7 +373,7 @@ export const Console = (): ReactNode => {
           content: [
             {
               type: 'input_text',
-              text: '会話可能時間の上限に達しました。自然な形で会話を終了してください。',
+              text: '「おっと、もう時間だ。またいつか会おうじゃないか。なに、もっと話がしたいのであればまたここに来ればいいだけのことだ。君自身の意思でな。」と返答してください。',
             },
           ],
         },
@@ -311,18 +386,6 @@ export const Console = (): ReactNode => {
     //  shouldInduceTopic,
     shouldDisConnect,
   ]);
-
-  useEffect(() => {
-    const client = realtimeClientRef.current;
-
-    if (items.length > 7) {
-      items.slice(0, items.length - 7).forEach(item => {
-        client.deleteItem(item.id);
-      });
-    }
-
-    // console.log(client.conversation.getItems());
-  }, [items]);
 
   return (
     <section
@@ -394,6 +457,13 @@ export const Console = (): ReactNode => {
           cursor: 'pointer',
         })}
         onClick={isConnected ? disconnectConversation : connectConversation}
+        onKeyDown={event => {
+          if (event.code !== 'Space') {
+            return;
+          }
+
+          event.preventDefault();
+        }}
       >
         <AnimatedEmoji
           emoji={isConnected ? emoji : 'sleeping-face'}
