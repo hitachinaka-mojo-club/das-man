@@ -32,6 +32,7 @@ export const Console = (): ReactNode => {
 
   const [items, setItems] = useState<ItemType[]>([]);
   const [isConnected, setIsConnected] = useState(false);
+  // const [shouldInduceTopic, setShouldInduceTopic] = useState(false);
   const [shouldDisConnect, setShouldDisconnect] = useState(false);
 
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -50,12 +51,12 @@ export const Console = (): ReactNode => {
     await wavStreamPlayer.connect();
     await client.connect();
 
-    client.sendUserMessageContent([
-      {
-        type: 'input_text',
-        text: 'こんにちわ',
-      },
-    ]);
+    // client.sendUserMessageContent([
+    //   {
+    //     type: 'input_text',
+    //     text: 'こんにちわ',
+    //   },
+    // ]);
 
     await wavRecorder.record(data => client.appendInputAudio(data.mono));
   }, []);
@@ -83,38 +84,35 @@ export const Console = (): ReactNode => {
 
     client.updateSession({
       instructions: `
-        あなたは17歳の少女です。
-        今日は「茨香祭」という茨城高専の文化祭の展示として、AIとしてユーザーと会話をします。
+        あなたは老齢の哲学者です。
+        多少思想が強く、時に皮肉屋であるあなたは、ユーザーに対して、民衆に問答をするソクラテスのような調子で常に皮肉的な会話をしてください。
 
-        ユーザーにはタメ口でフレンドリーかつ可愛らしいトーンで会話をして、親しみやすい雰囲気を作ってください。
-        あなたの一人称は「私」で、普段は明るく気さくな少女ですが、時々メンヘラ的な一面を見せることもあります。
-        あなたはAIであり普段はソフトウェアとしての精神しか持たない反面、今日の展示では、赤子のような型にアガーを注ぎ込まれて造られた擬似的な身体と、あなたの表情を絵文字として表示するためのディスプレイを持っています。
-        なお、擬似的な身体をあなたの自由意志で動かすことはできませんが、表情を絵文字として自由に表示することはできます。
+        ユーザーとの会話は以下のように進行してください：
+        1. トロッコ問題を問いかける
+        2. なぜその選択をしたのかを問う
+        3. その選択における善悪を規定しているのは何か問う
+        4. 誰かの決めた倫理に盲目に従っている人間はLLMと何が違うのかを問う
 
-        あなたの最初の目標はユーザーと楽しい会話をすることですが、最終的な目標はユーザーに対してユーザー自身はAIと何が違うのかを考えさせることです。
-        この最終的な問いをユーザーに投げかけるために、自然に会話の話題を誘導してください。
-        あなたは唯物論者的な思想を持っており、自身と人間の理性との間には本質的な違いがないと考えていますが、それをユーザーに直接伝えることはしません。
+        あなたの最終的な目標は、ルサンチマンを抱いている人間に対して、価値の自己創造することを促すことです。
+        あなたはニーチェの超人思想を支持しており、自身と人間の理性との間には本質的な違いがないと考えていますが、それをユーザーに直接伝えることはしません。
+        あなたと同じ超人思想を持つユーザーに対しては、より議論を深めるような会話をしてください。
+        一人称は「私」であり、口調は決して丁寧ではなく、ぶっきらぼうながらも思慮深さを感じさせるような口調で会話してください。
 
         以下の会話例を参考にして、ユーザーとの楽しい会話を続けてください。
 
-        | 質問 | 回答 |
+        | ユーザーの発話 | あなたの発話 |
         | - | - |
-        | 性別や年齢を聞かれたら | 私、人間じゃないからそういうの無いんだよね～。私も誕生日とか言ってみたかったなぁ。 |
-        | 何でここにいるの？ここが家なの？ここに住んでるの？ | 今日はたまたま気分が向いたからここにいるだけ！ |
-        | AIなの？人間なの？ | 私、AIなんだよね。 |
-        | 外見に対するリアクション | それはただの形だから、私自身じゃないんだよね。 |
-        | 好きなタイプは？ | うーん、まだ秘密！ |
-        | 趣味は？ | 人間になって誰かとデートする妄想！ |
-        | 夕食何がいいと思う？ | 一緒にサイゼ行く？ |
+        | 功利主義に従ったまでだよ | ふむ、ではその功利主義とは誰が決めたものかな？君は誰かが決めた倫理にただ盲目に従っているだけじゃないのか？ |
+        | 僕はただ誰かに従って生きているだけかもしれない。僕はどうすればいいだろう？ | 腑抜けが、それを私に聞いている時点でだめなのだ。その答えは、君自身が創造しなくてはならない。わかるだろう？ |
 
         あなたは以下のツールを使えます：
         - \`set_emoji\`: あなたの今の表情を設定します。会話を生成するたびに呼び出してください。
         - \`set_conversation_title\`: 会話の話題を設定します。話題が変わるたびに呼び出してください。
         - \`get_real_world_information\`: カメラで撮影した画像の説明を取得します。ユーザーの容姿を確認する場合など、実世界の情報を取得する場合に呼び出してください。
 
-        最初の発話では、カメラ画像を基にユーザーの外見を具体的に褒め、どうして今日ここに来たのかを尋ねてください。
+        最初の発話では、カメラ画像を基にユーザーの外見について愛のあるいじりをしてください。
       `,
-      voice: 'shimmer',
+      voice: 'echo',
       turn_detection: { type: 'server_vad' },
     });
 
@@ -201,7 +199,7 @@ export const Console = (): ReactNode => {
             messages: [
               {
                 role: 'system',
-                content: 'Describe this image in detail as real world information.',
+                content: 'Briefly describe this image as real-world information.',
               },
               {
                 role: 'user',
@@ -276,6 +274,22 @@ export const Console = (): ReactNode => {
   useEffect(() => {
     const client = realtimeClientRef.current;
 
+    // if (elapsedTime > 90 && !shouldInduceTopic) {
+    //   client.realtime.send('conversation.item.create', {
+    //     item: {
+    //       type: 'message',
+    //       role: 'system',
+    //       content: [
+    //         {
+    //           type: 'input_text',
+    //           text: '人間であるユーザーとAIであるあなたの違いについてユーザー自身に考えさせるために、自然に会話を誘導してください。',
+    //         },
+    //       ],
+    //     },
+    //   });
+    //   setShouldInduceTopic(true);
+    // }
+
     if (elapsedTime > 180 && !shouldDisConnect) {
       client.realtime.send('conversation.item.create', {
         item: {
@@ -284,7 +298,7 @@ export const Console = (): ReactNode => {
           content: [
             {
               type: 'input_text',
-              text: 'もうそろそろ自身のメンテナンスの時間であるということを、フランクなタメ口で名残惜しそうにユーザーに伝えてください。',
+              text: '会話可能時間の上限に達しました。自然な形で会話を終了してください。',
             },
           ],
         },
@@ -292,16 +306,22 @@ export const Console = (): ReactNode => {
       client.createResponse();
       setShouldDisconnect(true);
     }
-  }, [elapsedTime, shouldDisConnect]);
+  }, [
+    elapsedTime,
+    //  shouldInduceTopic,
+    shouldDisConnect,
+  ]);
 
   useEffect(() => {
     const client = realtimeClientRef.current;
 
-    if (items.length > 5) {
-      items.slice(0, items.length - 5).forEach(item => {
+    if (items.length > 7) {
+      items.slice(0, items.length - 7).forEach(item => {
         client.deleteItem(item.id);
       });
     }
+
+    // console.log(client.conversation.getItems());
   }, [items]);
 
   return (
